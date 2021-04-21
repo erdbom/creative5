@@ -2,7 +2,8 @@
 <div>
     <div class="wrapper">
         <div class="itinerary">
-            <div class="base" v-show="this.itinerary.length === 0">
+            <h2 v-if="user">{{user.firstName}} {{user.lastName}}'s Dream Vacation! <a @click="logout"><strong>Logout</strong></a></h2>
+            <div class="base" v-show="this.itinerary.length === 0 && !user">
                 <p>No Itinerary, add a location!</p>
             </div>
             <div class="itineraryitem" v-for="(item, index) in this.itinerary" :key="item._id">
@@ -35,7 +36,7 @@
     </div>
     <div class="total" v-show="this.itinerary.length !== 0">
             <h1>Total:</h1>
-            <p>${{this.$root.$data.total}}</p>
+            <p>${{total}}</p>
             <p>Have fun on your dream vacation!</p>
     </div>
 </div>
@@ -48,21 +49,23 @@ export default {
     name: "Itinerary",
     data() {
         return {
-            itinerary: []
+            itinerary: [],
+        }
+    },
+    computed: {
+        user() {
+            return this.$root.$data.user
+        },
+        total() {
+            return this.getTotal()
         }
     },
     created() {
         this.getItinerary();
     },
     methods: {
-        // deleteItem(item, index) {
-        //     this.$root.$data.itinerary.splice(index, 1);
-        //     this.$root.$data.total -= item.price;
-        //     item.isInItinerary = false;
-        // },
         async deleteItem(item, index) {
             try {
-                this.$root.$data.total -= item.price;
                 item.isInItinerary = false;
                 this.$root.$data.locations[index].isInItinerary = false;
                 await axios.delete("/api/itinerary/" + item._id);
@@ -76,6 +79,7 @@ export default {
             try {
                 let response = await axios.get("/api/itinerary");
                 this.itinerary = response.data;
+                
             }
             catch (error) {
                 //console.log(error);
@@ -100,7 +104,26 @@ export default {
         removeActivity(item, index) {
             item.activities.splice(index, 1);
             this.update(item);
-        }
+        },
+        async logout() {
+            try {
+                await axios.delete("/api/users");
+                this.$root.$data.user = null;
+                this.itinerary = [];
+            } catch (error) {
+                this.$root.$data.user = null;
+            }
+        },
+        getTotal() {
+            if (this.itenerary === []) {
+                return 0;
+            }
+            else {
+                return this.itinerary.reduce((prev, cur) => {
+                    return prev + cur.price;
+                }, 0);
+            }
+        },
     },
 }
 </script>

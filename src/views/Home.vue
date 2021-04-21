@@ -10,13 +10,13 @@
     </div>
   </div>
   <div class="wrapper">
-  <div class="left newleft">
-    <img src="/images/peru.jpg">
+    <div class="left newleft">
+      <img src="/images/peru.jpg">
+    </div>
+    <div class="right newright">
+      <info>Select from our locations and add your own Itinerary! The world is just around the corner!</info>
+    </div>
   </div>
-  <div class="right newright">
-    <info>Select from our locations and add your own Itinerary! The world is just around the corner!</info>
-  </div>
-</div>
 </div>
 </template>
 

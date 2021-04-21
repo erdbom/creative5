@@ -1,53 +1,33 @@
 <template>
-<div class="wrapper">
-  <div class="products">
-    <div class="location" v-for="location in this.$root.$data.locations" :key="location.id">
-      <div class="info">
-        <h1>{{location.name}}</h1>
-      </div>
-      <div class="image">
-        <img :src="'/images/'+location.image">
-      </div>
-      <div class="price">
-        <h2>${{location.price}}</h2>
-        <button v-if="!location.isInItinerary" v-on:click="addToItinerary(location)" class="auto">Add to Itinerary</button>
-      </div>
-    </div>
+  <div>
+    <Dest v-if='user'/>
+    <Login v-else/>
   </div>
-</div>
 </template>
 
 <script>
+import Dest from '@/components/Dest.vue';
+import Login from '@/components/Login.vue';
 import axios from 'axios';
-
 export default {
-  name: 'Destinations',
-  methods: {
-    // addToItinerary(location) {
-    //   this.$root.$data.itinerary.push(location);
-    //   this.$root.$data.total += location.price;
-    //   location.isInItinerary = true;
-    // },
-    async addToItinerary(location) {
-      try {
-        this.$root.$data.total += location.price;
-        location.isInItinerary = true;
-        //console.log(location);
-        await axios.post('/api/itinerary', {
-          name: location.name,
-          price: location.price,
-          image: location.image,
-          activities: location.activities,
-          isInItinerary: location.isInItinerary
-        });
-        //console.log(r.data);
-      }
-      catch (error) {
-        //console.log(error);
-      }
+  name: 'dashboard',
+  components: {
+    Dest,
+    Login,
+  },
+  async created() {
+    try {
+      let response = await axios.get('/api/users');
+      this.$root.$data.user = response.data.user;
+    } catch (error) {
+      this.$root.$data.user = null;
+    }
+  },
+  computed: {
+    user() {
+      return this.$root.$data.user;
     }
   }
-
 }
 </script>
 

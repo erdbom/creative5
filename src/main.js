@@ -9,6 +9,7 @@ import mock from './mock.js'
 let data = {
   locations: mock,
   total: 0,
+  user: null
 }
 
 new Vue({
